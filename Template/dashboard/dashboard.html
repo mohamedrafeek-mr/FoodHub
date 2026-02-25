@@ -1,0 +1,165 @@
+{% extends 'base.html' %}
+
+{% block title %}Admin Dashboard - FoodHub{% endblock %}
+
+{% block extra_css %}
+<style>
+    .dashboard-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+    
+    .stat-card {
+        background: white;
+        padding: 2rem;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        text-align: center;
+    }
+    
+    .stat-card h5 {
+        color: #666;
+        margin-bottom: 1rem;
+        font-size: 0.9rem;
+    }
+    
+    .stat-value {
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: var(--primary-color);
+    }
+    
+    .recent-orders {
+        background: white;
+        padding: 2rem;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    
+    .dashboard-menu {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 1rem;
+        margin-top: 2rem;
+    }
+    
+    .menu-btn {
+        padding: 1.5rem;
+        text-align: center;
+        background: white;
+        border: 2px solid #eee;
+        border-radius: 10px;
+        text-decoration: none;
+        color: #333;
+        transition: all 0.3s ease;
+    }
+    
+    .menu-btn:hover {
+        border-color: var(--primary-color);
+        color: var(--primary-color);
+        transform: translateY(-5px);
+    }
+    
+    .menu-btn i {
+        font-size: 2rem;
+        display: block;
+        margin-bottom: 0.5rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2 class="page-title"><i class="fas fa-chart-line"></i> Admin Dashboard</h2>
+    
+    <!-- Statistics Cards -->
+    <div class="dashboard-grid">
+        <div class="stat-card">
+            <h5>Total Orders</h5>
+            <div class="stat-value">{{ total_orders }}</div>
+        </div>
+        <div class="stat-card">
+            <h5>Total Revenue</h5>
+            <div class="stat-value">₹{{ total_revenue|floatformat:0 }}</div>
+        </div>
+        <div class="stat-card">
+            <h5>Total Users</h5>
+            <div class="stat-value">{{ total_users }}</div>
+        </div>
+        <div class="stat-card">
+            <h5>Pending Orders</h5>
+            <div class="stat-value">{{ pending_orders }}</div>
+        </div>
+    </div>
+    
+    <!-- Recent Orders -->
+    <div class="recent-orders">
+        <h5 style="margin-bottom: 1.5rem;">Recent Orders</h5>
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Customer</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                        <th>Date</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order in recent_orders %}
+                        <tr>
+                            <td>{{ order.order_number }}</td>
+                            <td>{{ order.user.username }}</td>
+                            <td>₹{{ order.total_price }}</td>
+                            <td>
+                                <span class="badge bg-{% if order.status == 'delivered' %}success{% elif order.status == 'cancelled' %}danger{% else %}warning{% endif %}">
+                                    {{ order.status|title }}
+                                </span>
+                            </td>
+                            <td>{{ order.created_at|date:"d M Y" }}</td>
+                            <td>
+                                <a href="{% url 'update_order_status' order.order_number %}" class="btn btn-sm btn-outline-primary">
+                                    Edit
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <!-- Dashboard Menu -->
+    <h5 style="margin-top: 2rem; margin-bottom: 1rem;">Management Tools</h5>
+    <div class="dashboard-menu">
+        <a href="{% url 'add_food' %}" class="menu-btn">
+            <i class="fas fa-plus-circle"></i>
+            <strong>Add Food Item</strong>
+        </a>
+        <a href="{% url 'manage_orders' %}" class="menu-btn">
+            <i class="fas fa-boxes"></i>
+            <strong>Manage Orders</strong>
+        </a>
+        <a href="{% url 'manage_reservations' %}" class="menu-btn">
+            <i class="fas fa-calendar-alt"></i>
+            <strong>Manage Reservations</strong>
+        </a>
+        <a href="{% url 'analytics' %}" class="menu-btn">
+            <i class="fas fa-chart-bar"></i>
+            <strong>View Analytics</strong>
+        </a>
+        <a href="{% url 'manage_users' %}" class="menu-btn">
+            <i class="fas fa-users"></i>
+            <strong>Manage Users</strong>
+        </a>
+        <a href="/admin/" class="menu-btn">
+            <i class="fas fa-cog"></i>
+            <strong>Django Admin</strong>
+        </a>
+    </div>
+</div>
+{% endblock %}

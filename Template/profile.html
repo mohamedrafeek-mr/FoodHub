@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+
+{% block title %}My Profile - FoodHub{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2 class="page-title">My Profile</h2>
+    
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="fas fa-user-circle"></i> Account Information</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <strong>First Name:</strong>
+                            <p>{{ user.first_name|default:"Not provided" }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <strong>Last Name:</strong>
+                            <p>{{ user.last_name|default:"Not provided" }}</p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <strong>Username:</strong>
+                            <p>{{ user.username }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <strong>Email:</strong>
+                            <p>{{ user.email }}</p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <strong>Member Since:</strong>
+                            <p>{{ user.date_joined|date:"d M Y" }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="fas fa-chart-bar"></i> Quick Stats</h5>
+                </div>
+                <div class="card-body">
+                    <p>
+                        <strong>Total Orders:</strong><br>
+                        <span style="font-size: 1.5rem; color: var(--primary-color);">{{ user.orders.count }}</span>
+                    </p>
+                    <p>
+                        <strong>Total Spent:</strong><br>
+                        <span style="font-size: 1.5rem; color: var(--primary-color);">₹0</span>
+                    </p>
+                    <hr>
+                    <a href="{% url 'my_orders' %}" class="btn btn-sm btn-primary w-100">View My Orders</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

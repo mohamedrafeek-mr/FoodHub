@@ -1,0 +1,395 @@
+{% extends 'base.html' %}
+
+{% block title %}Home - FoodHub{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Hero Banner */
+    .hero {
+        background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+        color: white;
+        padding: 6rem 0;
+        text-align: center;
+        animation: fadeIn 0.8s ease;
+    }
+    
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    .hero h1 {
+        font-size: 3rem;
+        font-weight: bold;
+        margin-bottom: 1rem;
+    }
+    
+    .hero p {
+        font-size: 1.3rem;
+        margin-bottom: 2rem;
+    }
+    
+    .search-container {
+        max-width: 600px;
+        margin: 0 auto 2rem;
+    }
+    
+    .search-form input {
+        padding: 1rem;
+        border: none;
+        border-radius: 25px;
+        width: 100%;
+    }
+    
+    /* Featured Items Grid */
+    .featured-section {
+        padding: 3rem 0;
+    }
+    
+    .food-card {
+        background: white;
+        border-radius: 15px;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        height: 100%;
+        animation: slideUp 0.6s ease;
+    }
+    
+    @keyframes slideUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    .food-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+    
+    .food-card img {
+        width: 100%;
+        height: 250px;
+        object-fit: cover;
+        transition: transform 0.3s ease;
+    }
+    
+    .food-card:hover img {
+        transform: scale(1.1);
+    }
+    
+    .food-info {
+        padding: 1.5rem;
+    }
+    
+    .food-name {
+        font-size: 1.2rem;
+        font-weight: bold;
+        color: #1a1a1a;
+        margin-bottom: 0.5rem;
+    }
+    
+    .food-desc {
+        color: #666;
+        font-size: 0.9rem;
+        margin-bottom: 1rem;
+        line-height: 1.4;
+    }
+    
+    .food-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .food-price {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: var(--primary-color);
+    }
+    
+    .add-btn {
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+        color: white;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        cursor: pointer;
+        font-size: 0.9rem;
+        transition: all 0.3s ease;
+    }
+    
+    .add-btn:hover {
+        transform: scale(1.05);
+    }
+    
+    /* Stats Section */
+    .stats-section {
+        background: linear-gradient(135deg, #1a1a1a 0%, #333 100%);
+        color: white;
+        padding: 3rem 0;
+        margin: 3rem 0;
+    }
+    
+    .stat-item {
+        text-align: center;
+        padding: 2rem;
+    }
+    
+    .stat-number {
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: var(--primary-color);
+    }
+    
+    .stat-label {
+        font-size: 1.1rem;
+        margin-top: 0.5rem;
+    }
+    
+    /* Call to Action */
+    .cta-section {
+        background: white;
+        padding: 3rem 0;
+        text-align: center;
+    }
+    
+    .cta-section h2 {
+        color: #1a1a1a;
+        margin-bottom: 2rem;
+    }
+    
+    @media (max-width: 768px) {
+        .hero h1 {
+            font-size: 2rem;
+        }
+        
+        .hero p {
+            font-size: 1rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div>
+    <!-- Hero Banner -->
+    <div class="hero">
+        <div class="container">
+            <h1>Welcome to FoodHub</h1>
+            <p>Order your favorite food online and get it delivered hot and fresh!</p>
+            
+            <div class="search-container">
+                <form method="get" action="{% url 'search_page' %}" class="search-form">
+                    <input type="text" name="q" placeholder="Search for food..." required>
+                </form>
+            </div>
+            
+            <a href="{% url 'menu' %}" class="btn btn-light btn-lg">Browse Menu</a>
+            {% if not user.is_authenticated %}
+                <a href="{% url 'register' %}" class="btn btn-outline-light btn-lg ms-2">Create Account</a>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Featured Items Section -->
+    <div class="container featured-section">
+        <h2 class="page-title">Featured Menu Items</h2>
+        <div class="row g-4">
+            {% for item in featured_items %}
+                <div class="col-md-6 col-lg-4">
+                    <div class="food-card">
+                        {% if item.image %}
+                            <img src="{{ item.image.url }}" alt="{{ item.name }}" class="card-img-top">
+                        {% else %}
+                            <div style="width: 100%; height: 250px; background: #f0f0f0; display: flex; align-items: center; justify-content: center;">
+                                <i class="fas fa-image" style="font-size: 3rem; color: #ccc;"></i>
+                            </div>
+                        {% endif %}
+                        <div class="food-info">
+                            <div class="food-name">{{ item.name }}</div>
+                            <div class="food-desc">{{ item.description|truncatewords:10 }}</div>
+                            <div class="food-footer">
+                                <span class="food-price">₹{{ item.price }}</span>
+                                {% if user.is_authenticated %}
+                                    <button type="button" class="add-btn add-to-cart-btn" data-item-id="{{ item.id }}" data-item-name="{{ item.name }}">
+                                        <i class="fas fa-shopping-cart"></i> Add
+                                    </button>
+                                {% else %}
+                                    <a href="{% url 'login' %}" class="add-btn">
+                                        <i class="fas fa-shopping-cart"></i> Add
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <div class="col-12">
+                    <div class="alert alert-info">No featured items available at the moment.</div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Stats Section -->
+    <div class="stats-section">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="stat-item">
+                        <div class="stat-number">500+</div>
+                        <div class="stat-label">Food Items</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-item">
+                        <div class="stat-number">50K+</div>
+                        <div class="stat-label">Happy Customers</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-item">
+                        <div class="stat-number">30 Min</div>
+                        <div class="stat-label">Delivery Time</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-item">
+                        <div class="stat-number">4.8 ⭐</div>
+                        <div class="stat-label">Rating</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CTA Section -->
+    <div class="cta-section">
+        <div class="container">
+            <h2>Ready to Order?</h2>
+            {% if user.is_authenticated %}
+                <p>Browse our full menu and add items to your cart</p>
+                <a href="{% url 'menu' %}" class="btn btn-primary btn-lg">View Full Menu</a>
+            {% else %}
+                <p>Sign up or login to start ordering delicious food</p>
+                <a href="{% url 'register' %}" class="btn btn-primary btn-lg">Create Account</a>
+                <a href="{% url 'login' %}" class="btn btn-outline-primary btn-lg ms-2">Login</a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Add to cart functionality
+    document.querySelectorAll('.add-to-cart-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            const itemId = this.getAttribute('data-item-id');
+            const itemName = this.getAttribute('data-item-name');
+            const btn = this;
+            const baseUrl = '/cart/add/' + itemId + '/';
+            
+            // Disable button during request
+            btn.disabled = true;
+            const originalHTML = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Adding...';
+            
+            // Create form data
+            const formData = new FormData();
+            formData.append('quantity', '1');
+            
+            // Send AJAX request
+            function getCookie(name) {
+                let cookieValue = null;
+                if (document.cookie && document.cookie !== '') {
+                    const cookies = document.cookie.split(';');
+                    for (let i = 0; i < cookies.length; i++) {
+                        const cookie = cookies[i].trim();
+                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                        }
+                    }
+                }
+                return cookieValue;
+            }
+            const csrfToken = getCookie('csrftoken') || '';
+            fetch(baseUrl, {
+                method: 'POST',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRFToken': csrfToken,
+                },
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Show success message
+                    showNotification(itemName + ' added to cart!', 'success');
+                    // Update cart count in navbar
+                    updateCartCount(data.cart_count);
+                } else {
+                    showNotification('Failed to add item to cart', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showNotification('Error adding item to cart', 'error');
+            })
+            .finally(() => {
+                // Re-enable button
+                btn.disabled = false;
+                btn.innerHTML = originalHTML;
+            });
+        });
+    });
+    
+    // Show notification toast
+    function showNotification(message, type) {
+        if (type === undefined) type = 'success';
+        const alertType = type === 'success' ? 'alert-success' : 'alert-danger';
+        const alertHTML = '<div class="alert ' + alertType + ' alert-dismissible fade show" role="alert" style="position: fixed; top: 20px; right: 20px; z-index: 2000; min-width: 300px; animation: slideIn 0.3s ease;">' + message + '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>';
+        
+        const alertDiv = document.createElement('div');
+        alertDiv.innerHTML = alertHTML;
+        document.body.appendChild(alertDiv.firstElementChild);
+        
+        // Auto-dismiss after 3 seconds
+        setTimeout(() => {
+            const alert = document.querySelector('.alert-dismissible:last-of-type');
+            if (alert) {
+                alert.style.animation = 'slideOut 0.3s ease';
+                setTimeout(() => alert.remove(), 300);
+            }
+        }, 3000);
+    }
+    
+    // Update cart count in navbar
+    function updateCartCount(count) {
+        const cartBadge = document.querySelector('.cart-badge');
+        if (cartBadge) {
+            cartBadge.textContent = count;
+            cartBadge.style.display = count > 0 ? 'inline-block' : 'none';
+        }
+    }
+    
+    // Add CSS animations
+    const style = document.createElement('style');
+    style.textContent = '@keyframes slideIn { from { transform: translateX(400px); opacity: 0; } to { transform: translateX(0); opacity: 1; } } @keyframes slideOut { from { transform: translateX(0); opacity: 1; } to { transform: translateX(400px); opacity: 0; } }';
+    document.head.appendChild(style);
+</script>
+{% endblock %}

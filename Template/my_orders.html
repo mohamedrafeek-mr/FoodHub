@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% block title %}My Orders - FoodHub{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2 class="page-title">My Orders</h2>
+    
+    {% if orders %}
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Date</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                        <th>Payment</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order in orders %}
+                        <tr>
+                            <td>{{ order.order_number }}</td>
+                            <td>{{ order.created_at|date:"d M Y" }}</td>
+                            <td>₹{{ order.total_price }}</td>
+                            <td>
+                                <span class="badge bg-{% if order.status == 'delivered' %}success{% elif order.status == 'cancelled' %}danger{% elif order.status == 'preparing' %}warning{% else %}info{% endif %}">
+                                    {{ order.get_status_display }}
+                                </span>
+                            </td>
+                            <td>
+                                <span class="badge bg-{% if order.payment_status == 'completed' %}success{% elif order.payment_status == 'failed' %}danger{% else %}warning{% endif %}">
+                                    {{ order.payment_status|title }}
+                                </span>
+                            </td>
+                            <td>
+                                <a href="{% url 'order_detail' order.order_number %}" class="btn btn-sm btn-outline-primary">
+                                    View Details
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="alert alert-info" role="alert">
+            <h5>No Orders Yet</h5>
+            <p>You haven't placed any orders yet. <a href="{% url 'menu' %}">Browse our menu</a> to get started!</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

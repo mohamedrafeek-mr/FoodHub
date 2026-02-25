@@ -1,0 +1,134 @@
+{% extends 'base.html' %}
+
+{% block title %}Contact - FoodHub{% endblock %}
+
+{% block extra_css %}
+<style>
+    .contact-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+        margin: 2rem 0;
+    }
+    
+    .contact-form {
+        background: white;
+        padding: 2rem;
+        border-radius: 15px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    }
+    
+    .contact-info {
+        background: white;
+        padding: 2rem;
+        border-radius: 15px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    }
+    
+    .info-item {
+        margin-bottom: 1.5rem;
+        padding-bottom: 1.5rem;
+        border-bottom: 1px solid #eee;
+    }
+    
+    .info-item:last-child {
+        border-bottom: none;
+    }
+    
+    .info-item i {
+        color: var(--primary-color);
+        font-size: 1.5rem;
+        margin-right: 1rem;
+    }
+    
+    @media (max-width: 768px) {
+        .contact-container {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2 class="page-title">Contact Us</h2>
+    
+    <div class="contact-container">
+        <div class="contact-form">
+            <h4 style="margin-bottom: 1.5rem;">Send us a Message</h4>
+            <form method="post">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label class="form-label">Name *</label>
+                    <input type="text" class="form-control" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Email *</label>
+                    <input type="email" class="form-control" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Phone (Optional)</label>
+                    <input type="tel" class="form-control" name="phone">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Subject *</label>
+                    <input type="text" class="form-control" name="subject" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Message *</label>
+                    <textarea class="form-control" name="message" rows="5" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary w-100">Send Message</button>
+            </form>
+        </div>
+        
+        <div class="contact-info">
+            <h4 style="margin-bottom: 1.5rem;">Get in Touch</h4>
+            
+            <div class="info-item">
+                <i class="fas fa-phone"></i>
+                <div>
+                    <h6>Phone</h6>
+                    <p>+91-XXXXXXXXXX</p>
+                </div>
+            </div>
+            
+            <div class="info-item">
+                <i class="fas fa-envelope"></i>
+                <div>
+                    <h6>Email</h6>
+                    <p><a href="mailto:support@foodhub.com">support@foodhub.com</a></p>
+                </div>
+            </div>
+            
+            <div class="info-item">
+                <i class="fas fa-map-marker-alt"></i>
+                <div>
+                    <h6>Address</h6>
+                    <p>123, Food Street<br>Restaurant City<br>123456</p>
+                </div>
+            </div>
+            
+            <div class="info-item">
+                <i class="fas fa-clock"></i>
+                <div>
+                    <h6>Working Hours</h6>
+                    <p>Monday - Sunday<br>10:00 AM - 11:00 PM</p>
+                </div>
+            </div>
+            
+            <div class="info-item">
+                <i class="fas fa-utensils"></i>
+                <div>
+                    <h6>Follow Us</h6>
+                    <p>
+                        <a href="#" class="me-2"><i class="fab fa-facebook"></i></a>
+                        <a href="#" class="me-2"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="me-2"><i class="fab fa-instagram"></i></a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

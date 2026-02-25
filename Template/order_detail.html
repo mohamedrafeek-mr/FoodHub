@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+
+{% block title %}Order Details - FoodHub{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2 class="page-title">Order #{{ order.order_number }}</h2>
+    
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card mb-3">
+                <div class="card-header">
+                    <h5>Order Items</h5>
+                </div>
+                <div class="card-body">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Item</th>
+                                <th>Price</th>
+                                <th>Quantity</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in items %}
+                                <tr>
+                                    <td>{{ item.food_item.name }}</td>
+                                    <td>₹{{ item.price }}</td>
+                                    <td>{{ item.quantity }}</td>
+                                    <td>₹{{ item.get_subtotal }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    <div style="text-align: right; padding-top: 1rem; border-top: 2px solid #eee;">
+                        <h5>Total: <span style="color: var(--primary-color);">₹{{ order.total_price }}</span></h5>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <h5>Order Status</h5>
+                </div>
+                <div class="card-body">
+                    <div class="progress" style="height: 25px;">
+                        {% if order.status == 'pending' %}
+                            <div class="progress-bar bg-warning" style="width: 25%;">Pending</div>
+                        {% elif order.status == 'confirmed' %}
+                            <div class="progress-bar bg-info" style="width: 50%;">Confirmed</div>
+                        {% elif order.status == 'preparing' %}
+                            <div class="progress-bar bg-warning" style="width: 75%;">Preparing</div>
+                        {% elif order.status == 'delivered' %}
+                            <div class="progress-bar bg-success" style="width: 100%;">Delivered</div>
+                        {% elif order.status == 'cancelled' %}
+                            <div class="progress-bar bg-danger" style="width: 100%;">Cancelled</div>
+                        {% endif %}
+                    </div>
+                    <p style="margin-top: 1rem;"><strong>Current Status:</strong> {{ order.get_status_display }}</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card mb-3">
+                <div class="card-header">
+                    <h5>Delivery Details</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>Address:</strong></p>
+                    <p>{{ order.delivery_address }}</p>
+                    <p><strong>Phone:</strong> {{ order.phone }}</p>
+                    <p><strong>Estimated Delivery:</strong><br>{{ order.estimated_delivery|date:"d M Y, H:i" }}</p>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <h5>Payment Details</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>Method:</strong> {{ order.get_payment_method_display }}</p>
+                    <p><strong>Status:</strong> <span class="badge bg-{% if order.payment_status == 'completed' %}success{% elif order.payment_status == 'failed' %}danger{% else %}warning{% endif %}">{{ order.payment_status|title }}</span></p>
+                    <p><strong>Amount:</strong> ₹{{ order.total_price }}</p>
+                </div>
+            </div>
+            
+            {% if order.status not in 'delivered,cancelled' %}
+                <form method="post" action="{% url 'cancel_order' order.order_number %}" style="margin-top: 1rem;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger w-100" onclick="return confirm('Cancel this order?');">
+                        Cancel Order
+                    </button>
+                </form>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

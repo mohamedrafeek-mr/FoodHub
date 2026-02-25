@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+
+{% block title %}Payment Successful - FoodHub{% endblock %}
+
+{% block extra_css %}
+<style>
+    .success-container {
+        text-align: center;
+        padding: 3rem 0;
+    }
+    
+    .success-icon {
+        width: 100px;
+        height: 100px;
+        background: linear-gradient(135deg, var(--success-color) 0%, #20c997 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 2rem;
+        color: white;
+        font-size: 3rem;
+        animation: bounce 1s ease;
+    }
+    
+    @keyframes bounce {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-20px); }
+    }
+    
+    .order-details {
+        background: white;
+        padding: 2rem;
+        border-radius: 10px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        margin: 2rem 0;
+        text-align: left;
+    }
+    
+    .detail-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 1rem;
+        padding: 0.5rem 0;
+        border-bottom: 1px solid #eee;
+    }
+    
+    .detail-row:last-child {
+        border-bottom: none;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="success-container">
+        <div class="success-icon">
+            <i class="fas fa-check"></i>
+        </div>
+        
+        <h2>Payment Successful!</h2>
+        <p style="font-size: 1.2rem; color: #666;">Your order has been confirmed and will be prepared shortly.</p>
+        
+        {% if order %}
+            <div class="order-details">
+                <h5 style="margin-bottom: 1.5rem;">Order Confirmation</h5>
+                <div class="detail-row">
+                    <span>Order Number:</span>
+                    <strong>{{ order.order_number }}</strong>
+                </div>
+                <div class="detail-row">
+                    <span>Order Date:</span>
+                    <strong>{{ order.created_at|date:"d M Y, H:i" }}</strong>
+                </div>
+                <div class="detail-row">
+                    <span>Total Amount:</span>
+                    <strong style="color: var(--primary-color);">₹{{ order.total_price }}</strong>
+                </div>
+                <div class="detail-row">
+                    <span>Delivery Address:</span>
+                    <strong>{{ order.delivery_address }}</strong>
+                </div>
+                <div class="detail-row">
+                    <span>Estimated Delivery:</span>
+                    <strong>{{ order.estimated_delivery|date:"d M Y, H:i" }}</strong>
+                </div>
+            </div>
+        {% endif %}
+        
+        <p style="color: #666; font-size: 1rem;">A confirmation email has been sent to your registered email address.</p>
+        
+        <div class="mt-4">
+            {% if order %}
+                <a href="{% url 'order_detail' order.order_number %}" class="btn btn-primary me-2">Track Order</a>
+            {% endif %}
+            <a href="{% url 'home' %}" class="btn btn-outline-primary">Back to Home</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

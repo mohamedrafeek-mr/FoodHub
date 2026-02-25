@@ -1,0 +1,7 @@
+Django
+Pillow
+razorpay
+psycopg2-binary
+gunicorn
+python-dotenv
+django-allauth

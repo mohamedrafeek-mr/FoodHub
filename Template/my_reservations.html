@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block title %}My Reservations - FoodHub{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2 class="page-title">My Table Reservations</h2>
+    
+    {% if reservations %}
+        <div class="row">
+            {% for reservation in reservations %}
+                <div class="col-md-6 mb-3">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5>{{ reservation.reservation_date|date:"d M Y" }} at {{ reservation.reservation_time|time:"H:i" }}</h5>
+                        </div>
+                        <div class="card-body">
+                            <p><strong>Name:</strong> {{ reservation.name }}</p>
+                            <p><strong>Email:</strong> {{ reservation.email }}</p>
+                            <p><strong>Phone:</strong> {{ reservation.phone }}</p>
+                            <p><strong>Guests:</strong> {{ reservation.number_of_guests }}</p>
+                            <p><strong>Status:</strong> <span class="badge bg-info">{{ reservation.status|title }}</span></p>
+                            {% if reservation.special_requests %}
+                                <p><strong>Special Requests:</strong> {{ reservation.special_requests }}</p>
+                            {% endif %}
+                        </div>
+                        <div class="card-footer">
+                            {% if reservation.status in 'pending,confirmed' %}
+                                <form method="post" action="{% url 'cancel_reservation' reservation.id %}" style="display: inline;">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Cancel this reservation?');">Cancel</button>
+                                </form>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-info">
+            <h5>No Reservations</h5>
+            <p><a href="{% url 'book_table' %}">Book a table</a> to reserve your favorite seating!</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
